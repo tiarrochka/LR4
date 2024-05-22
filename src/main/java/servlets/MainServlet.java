@@ -1,5 +1,6 @@
 package servlets;
 
+import services.TelephoneEntry;
 import services.MainService;
 
 import javax.servlet.ServletException;
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.List;
 
 @WebServlet("/test")
 public class MainServlet extends HttpServlet {
@@ -36,16 +37,17 @@ public class MainServlet extends HttpServlet {
         out.print("<th>Действия</th>");
         out.print("</tr>");
         try {
-            for (Map<String, Object> row : mainService.getNames()) {
+            List<TelephoneEntry> entries = mainService.getNames();
+            for (TelephoneEntry entry : entries) {
                 out.print("<tr>");
-                out.print("<td>" + row.get("name") + "</td>");
+                out.print("<td>" + entry.getName() + "</td>");
                 out.print("<td>");
                 out.print("<form action='edit' method='get' style='display:inline;'>");
-                out.print("<input type='hidden' name='name' value='" + row.get("name") + "'>");
+                out.print("<input type='hidden' name='oldName' value='" + entry.getName() + "'>");
                 out.print("<input type='submit' value='Редактировать'>");
                 out.print("</form>");
                 out.print("<form action='delete' method='post' style='display:inline;'>");
-                out.print("<input type='hidden' name='name' value='" + row.get("name") + "'>");
+                out.print("<input type='hidden' name='name' value='" + entry.getName() + "'>");
                 out.print("<input type='submit' value='Удалить'>");
                 out.print("</form>");
                 out.print("</td>");
