@@ -1,11 +1,10 @@
 package services;
 
+import services.TelephoneEntry;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainService {
 
@@ -20,14 +19,12 @@ public class MainService {
         dbService.insert(sql);
     }
 
-    public List<Map<String, Object>> getNames() throws SQLException {
-        List<Map<String, Object>> result = new ArrayList<>();
+    public List<TelephoneEntry> getNames() throws SQLException {
+        List<TelephoneEntry> result = new ArrayList<>();
         String sql = "SELECT * FROM public.telephone";
         ResultSet rs = dbService.select(sql);
         while (rs.next()) {
-            Map<String, Object> row = new HashMap<>();
-            row.put("name", rs.getString("name"));
-            result.add(row);
+            result.add(new TelephoneEntry(rs.getString("name")));
         }
         return result;
     }
