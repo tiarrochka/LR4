@@ -1,5 +1,6 @@
 package servlets;
 
+import services.TelephoneEntry;
 import services.MainService;
 
 import javax.servlet.ServletException;
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.List;
 
 @WebServlet("/edit")
 public class EditServlet extends HttpServlet {
@@ -23,19 +24,29 @@ public class EditServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        if (name != null) {
+        String oldName = req.getParameter("oldName");
+        if (oldName != null) {
             req.setCharacterEncoding("utf8");
             resp.setCharacterEncoding("utf8");
             resp.setContentType("text/html; charset=UTF-8");
             PrintWriter out = new PrintWriter(new OutputStreamWriter(resp.getOutputStream(), "UTF8"), true);
             out.println("<html><body>");
             out.print("<form method='post'>");
-            out.print("<input type='hidden' name='oldName' value='" + name + "' />");
-            out.print("<p>Введите новое название</p>");
-            out.print("<input name='newName' type='text' value='" + name + "' />");
-            out.print("<p></p>");
-            out.print("<input type='submit' value='Сохранить изменения'>");
+            out.print("<input type='hidden' name='oldName' value='" + oldName + "' />");
+            try {
+                List<TelephoneEntry> entries = mainService.getNames();
+                for (TelephoneEntry entry : entries) {
+                    if (entry.getName().equals(oldName)) {
+                        out.print("<p>Введите новое название</p>");
+                        out.print("<input name='newName' type='text' value='" + entry.getName() + "' />");
+                        out.print("<p></p>");
+                        out.print("<input type='submit' value='Сохранить изменения'>");
+                        break;
+                    }
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             out.print("</form>");
             out.println("</body></html>");
         }
